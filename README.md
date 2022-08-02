@@ -12,10 +12,12 @@ To test successful installation, run:
 
 ## Disclaimers
 
-Please note that this script will install Homebrew if necessary, required packages, and modify your `.zshrc` file. Please read through this script and understand what it does before running on your machine. 
+Please note that this script will install Xcode tools and Homebrew if necessary, install required packages, and modify your `.zshrc` file. Please read through this script and understand what it does before running on your machine. 
 
 So far this script has only been tested on macOS Monterey (12.4) on an Intel-based MacBook Pro.
 
 ## Thanks
 
-[Physino](https://www.youtube.com/c/PhysinoXyz) for his [excellent YT video](https://www.youtube.com/watch?v=Qk34s9xIF_4&t=839s).
+Thanks to [Physino](https://www.youtube.com/c/PhysinoXyz) for his [excellent YT video](https://www.youtube.com/watch?v=Qk34s9xIF_4&t=839s).
+
+I was heavily inspired by [macos_virtualbox](https://github.com/myspaghetti/macos-virtualbox) to write this script.

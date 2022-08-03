@@ -1,9 +1,9 @@
 # macOS Monte Carlo Installer
 ### push-button installation of Geant4/Root/GATE on macOS
 
-The `macos_montecarlo.sh` script aims to perform all necessary downloads, installations, and compilations to get [Geant4](https://geant4.web.cern.ch)~~, [Root](https://root.cern.ch), and [GATE](http://www.opengatecollaboration.org)~~ up and running on vanilla macOS with a single command (currently only Geant4 implemented).
+This bash script aims to perform all necessary downloads, compilations, and installations to get [Geant4](https://geant4.web.cern.ch), [Root](https://root.cern.ch), ~~and [GATE](http://www.opengatecollaboration.org)~~ up and running on vanilla macOS with a single command (currently only Geant4 and Root implemented).
 
-Open a terminal, navigate to the cloned repo, and run `source macos_montecarlo.sh`. Geant4 will be installed to `/usr/local/Geant4-10.7.3/`, with executables into `/usr/local/bin`.
+Open a terminal, navigate to the cloned repo, and run `source macos_montecarlo.sh`. Geant4 will be installed to `/usr/local/share/Geant4-11.0.2/`, with executables into `/usr/local/bin`. Root will be installed by homebrew into the usual `/usr/local/Cellar` location (symlinked into `/usr/local/bin`).
 
 To test successful installation, run:
 - version: `./geant4-config --version`
@@ -14,10 +14,10 @@ To test successful installation, run:
 
 Please note that this script will install Xcode tools and Homebrew if necessary, install required packages, and modify your `.zshrc` file. Please read through this script and understand what it does before running on your machine. 
 
-So far this script has only been tested on macOS Monterey (12.4) on an Intel-based MacBook Pro. It definitely will not work with any version earlier than Catalina, which is when Apple switched from bash to zsh.
+This script has only been tested on macOS Monterey (12.4) on an Intel-based MacBook Pro. It definitely will not work with any version earlier than Catalina, which is when Apple switched from bash to zsh.
 
-## Thanks
+## Credits
 
-Thanks to [Physino](https://www.youtube.com/c/PhysinoXyz) for his [excellent YT video](https://www.youtube.com/watch?v=Qk34s9xIF_4&t=839s).
+Thanks to [Physino](https://www.youtube.com/c/PhysinoXyz) for his [excellent YouTube video](https://www.youtube.com/watch?v=Qk34s9xIF_4&t=839s).
 
-I was heavily inspired by [macos_virtualbox](https://github.com/myspaghetti/macos-virtualbox) to write this script.
+I was heavily inspired by [myspaghetti]()https://github.com/myspaghetti]'s [macos_virtualbox](https://github.com/myspaghetti/macos-virtualbox) to write this script.

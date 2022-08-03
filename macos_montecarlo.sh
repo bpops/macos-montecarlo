@@ -25,6 +25,7 @@ function set_variables() {
 
     # application urls
     GEANT4_URL=https://geant4-data.web.cern.ch/releases/geant4-v11.0.2.tar.gz
+    # note: that this must be a .tar.gz file for this script to work
     BREW_URL=https://raw.githubusercontent.com/Homebrew/install/master/install
 
     # download directory
@@ -32,6 +33,12 @@ function set_variables() {
 
     # number of processors to use for compile
     N_PROC=$(nproc)
+
+    # Geant4 specific variables
+    GEANT4_BUILD_MULTITHREADED=ON
+    GEANT4_BUILD_INSTALL_DATA=ON
+    GEANT4_USE_GDML=ON
+    GEANT4_USE_QT=ON
 
 }
 
@@ -56,6 +63,8 @@ function welcome(){
 function parse_variables(){
     GEANT4_FILENAME=$(basename $GEANT4_URL)
     GEANT4_BASENAME=${GEANT4_FILENAME%.tar.gz}
+    GEANT4_SRC_PTH=$PWD/$DOWN_DIR/$GEANT4_BASENAME
+    GEANT4_BLD_PTH=$GEANT4_SRC_PTH/build
 }
 
 # install xcode tools
@@ -83,6 +92,7 @@ function make_dl_dir(){
 
 # get geant4 files and extract
 function download_geant4(){
+    echo "Downloading Geant4..."
     wget $GEANT4_URL -P $DOWN_DIR
     tar -xvf $DOWN_DIR/$GEANT4_FILENAME -C $DOWN_DIR/
 }
@@ -91,6 +101,7 @@ function download_geant4(){
 function install_geant4_reqs(){
 
     # install packages
+    echo "Installing Geant4 requirements..."
     brew install cmake qt@5 xerces-c
 
     # add qt5 to path
@@ -105,23 +116,35 @@ function install_geant4(){
     export LDFLAGS="-L/usr/local/opt/qt@5/lib"
     export CPPFLAGS="-I/usr/local/opt/qt@5/include"
 
-    # perform cmake for geant4
+    # execute cmake
+    cmake \
+        -DCMAKE_PREFIX_PATH=/usr/local/opt/qt@5/lib/cmake \
+        -DGEANT4_BUILD_MULTITHREADED=$GEANT4_BUILD_MULTITHREADED \
+        -DGEANT4_INSTALL_DATA=$GEANT4_BUILD_INSTALL_DATA \
+        -DGEANT4_USE_GDML=$GEANT4_USE_GDML \
+        -DGEANT4_USE_QT=$GEANT4_USE_QT \
+        -S $GEANT4_SRC_PTH -B $GEANT4_BLD_PTH
 
-    cd $DOWN_DIR
+    # compile
+    echo "Compiling Geant4..."
+    cd $GEANT4_BLD_PTH
     make -j $N_PROC
     make install
 
     # add geant4 scrip to path
-    echo 'PWD=$(pwd)' >> ~/.zshrc
-    echo 'cd /usr/local/bin/' >> ~/.zshrc
-    echo 'source geant4.sh' >> ~/.zshrc
-    echo 'cd $PWD' >> ~/.zshrc
+    echo 'source /usr/local/bin/geant4.sh' >> ~/.zshrc
 
 }
 
 # install root
 function install_root(){
+    echo "Installing Root..."
     brew install root
+}
+
+# install gate
+function install_gate(){
+    echo "Installing GATE..."
 }
 
 # procedure
@@ -138,4 +161,7 @@ if $INSTALL_GEANT4; then
 fi
 if $INSTALL_ROOT; then
     install_root
+fi
+if $INSTALL_GATE; then
+    install_gate
 fi

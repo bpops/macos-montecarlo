@@ -11,7 +11,7 @@
 #
 #            push-button installation of Geant4/Root/GATE on macOS
 #
-#                 https://github.com/bpops/macos_montecarlo
+#                 https://github.com/bpops/macos-montecarlo
 #                             GPL-2.0 License
 #
 

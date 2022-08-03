@@ -1,0 +1,141 @@
+#
+#                                             _ \   ___|
+#                       __ `__ \   _` |  __| |   |\___ \
+#                       |   |   | (   | (    |   |      |
+#                      _|  _|  _|\__,_|\___|\___/ _____/
+#
+#         \  |  _ \   \  |__ __| ____|   ___|    \     _ \  |      _ \
+#        |\/ | |   |   \ |   |   __|    |       _ \   |   | |     |   |
+#        |   | |   | |\  |   |   |      |      ___ \  __ <  |     |   |
+#       _|  _|\___/ _| \_|  _|  _____| \____|_/    _\_| \_\_____|\___/
+#
+#            push-button installation of Geant4/Root/GATE on macOS
+#
+#                 https://github.com/bpops/macos_montecarlo
+#                             GPL-2.0 License
+#
+
+# set all variables
+function set_variables() {
+
+    # which apps to install
+    INSTALL_GEANT4=true
+    INSTALL_ROOT=false
+    INSTALL_GATE=false
+
+    # application urls
+    GEANT4_URL=https://geant4-data.web.cern.ch/releases/geant4-v11.0.2.tar.gz
+    BREW_URL=https://raw.githubusercontent.com/Homebrew/install/master/install
+
+    # download directory
+    DOWN_DIR=downloads
+
+    # number of processors to use for compile
+    N_PROC=$(nproc)
+
+}
+
+function welcome(){
+    echo "";
+    echo "";
+    echo "                                           _ \x5C   ___|";
+    echo "                     __ \x60__ \x5C   _\x60 |  __| |   |\x5C___ \x5C";
+    echo "                     |   |   | (   | (    |   |      |";
+    echo "                    _|  _|  _|\x5C__,_|\x5C___|\x5C___/ _____/";
+    echo "";
+    echo "       \x5C  |  _ \x5C   \x5C  |__ __| ____|   ___|    \x5C     _ \x5C  |      _ \x5C";
+    echo "      |\x5C/ | |   |   \x5C |   |   __|    |       _ \x5C   |   | |     |   |";
+    echo "      |   | |   | |\x5C  |   |   |      |      ___ \x5C  __ <  |     |   |";
+    echo "     _|  _|\x5C___/ _| \x5C_|  _|  _____| \x5C____|_/    _\x5C_| \x5C_\x5C_____|\x5C___/";
+    echo "";
+    echo "          push-button installation of Geant4/Root/GATE on macOS";
+    echo "";
+}
+
+# extract filenames, basenames
+function parse_variables(){
+    GEANT4_FILENAME=$(basename $GEANT4_URL)
+    GEANT4_BASENAME=${GEANT4_FILENAME%.tar.gz}
+}
+
+# install xcode tools
+function install_xcode(){
+    if which gcc; then echo "Xcode tools already installed"; else
+        echo "Installing Xcode tools..."
+        xcode-select --install
+    fi
+}
+
+# install homebrew
+function install_homebrew(){
+    if which brew; then echo "Homebrew already installed"; else
+        echo "Installing Homebrew..."
+        /usr/bin/ruby -e "$(curl -fsSL $BREW_URL)"
+    fi
+}
+
+# make downloads directory
+function make_dl_dir(){
+    if [ ! -d $DOWN_DIR ]; then
+        mkdir $DOWN_DIR
+    fi
+}
+
+# get geant4 files and extract
+function download_geant4(){
+    wget $GEANT4_URL -P $DOWN_DIR
+    tar -xvf $DOWN_DIR/$GEANT4_FILENAME -C $DOWN_DIR/
+}
+
+# install brew packages required by geant
+function install_geant4_reqs(){
+
+    # install packages
+    brew install cmake qt@5 xerces-c
+
+    # add qt5 to path
+    echo 'export PATH="/usr/local/opt/qt@5/bin:$PATH"' >> ~/.zshrc
+
+}
+
+# install geant4
+function install_geant4(){
+
+    #export qt5 flags
+    export LDFLAGS="-L/usr/local/opt/qt@5/lib"
+    export CPPFLAGS="-I/usr/local/opt/qt@5/include"
+
+    # perform cmake for geant4
+
+    cd $DOWN_DIR
+    make -j $N_PROC
+    make install
+
+    # add geant4 scrip to path
+    echo 'PWD=$(pwd)' >> ~/.zshrc
+    echo 'cd /usr/local/bin/' >> ~/.zshrc
+    echo 'source geant4.sh' >> ~/.zshrc
+    echo 'cd $PWD' >> ~/.zshrc
+
+}
+
+# install root
+function install_root(){
+    brew install root
+}
+
+# procedure
+welcome
+set_variables
+parse_variables
+install_xcode
+install_homebrew
+make_dl_dir
+if $INSTALL_GEANT4; then
+    download_geant4
+    install_geant4_reqs
+    install_geant4
+fi
+if $INSTALL_ROOT; then
+    install_root
+fi

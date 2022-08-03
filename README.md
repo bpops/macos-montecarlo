@@ -14,7 +14,7 @@ To test successful installation, run:
 
 Please note that this script will install Xcode tools and Homebrew if necessary, install required packages, and modify your `.zshrc` file. Please read through this script and understand what it does before running on your machine. 
 
-So far this script has only been tested on macOS Monterey (12.4) on an Intel-based MacBook Pro.
+So far this script has only been tested on macOS Monterey (12.4) on an Intel-based MacBook Pro. It definitely will not work with any version earlier than Catalina, which is when Apple switched from bash to zsh.
 
 ## Thanks
 

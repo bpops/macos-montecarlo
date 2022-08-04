@@ -20,4 +20,4 @@ This script has only been tested on macOS Monterey (12.4) on an Intel-based MacB
 
 Thanks to [Physino](https://www.youtube.com/c/PhysinoXyz) for his [excellent YouTube video](https://www.youtube.com/watch?v=Qk34s9xIF_4&t=839s).
 
-I was heavily inspired by [myspaghetti]()https://github.com/myspaghetti]'s [macos_virtualbox](https://github.com/myspaghetti/macos-virtualbox) to write this script.
+I was heavily inspired by [macos_virtualbox](https://github.com/myspaghetti/macos-virtualbox) to write this script.

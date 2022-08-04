@@ -42,6 +42,13 @@ function set_variables() {
 
 }
 
+# press key to continue
+function press_key(){
+    echo "Press any key to continue..."
+    read -n 1
+}
+
+# welcome message
 function welcome(){
     echo "";
     echo "";
@@ -57,6 +64,26 @@ function welcome(){
     echo "";
     echo "          push-button installation of Geant4/Root/GATE on macOS";
     echo "";
+    echo "                                  -----";
+    echo "";
+
+    echo "This script automates the downloading, compilation, and installation of";
+    echo "Geant4, ROOT, and GATE on macOS. It is designed to be used on a vanilla";
+    echo "macOS installation. Please note that it will install Xcode tools, Homebrew,";
+    echo "and required packages if they are not already installed. It will also modify";
+    echo "your .zshrc file to include the GATE and Geant4 paths. Please read the";
+    echo "script and understand what the script is doing before execution.";
+    echo ""
+    echo "You may be asked for your password multiple times, primariliy in order to";
+    echo "install Homebrew and required packages.";
+    echo "";
+    echo "This script may take tens of minutes or even hours to complete. Premature";
+    echo "termination of the script may result in a partially installed system.";
+    echo "";
+    echo "If you understand and agree to all of the above, press ANY KEY to";
+    echo "continue. Otherwise, press CTRL+C to exit.";
+    echo ""
+    press_key
 }
 
 # extract filenames, basenames
@@ -81,6 +108,7 @@ function install_homebrew(){
         echo "Installing Homebrew..."
         /usr/bin/ruby -e "$(curl -fsSL $BREW_URL)"
     fi
+    brew install wget
 }
 
 # make downloads directory
@@ -146,6 +174,17 @@ function install_root(){
 function install_gate(){
     echo "Installing GATE..."
 }
+
+
+#echo "Press any key to continue"
+#while [ true ] ; do
+#read -t 3 -n 1
+#if [ $? = 0 ] ; then
+#exit ;
+#else
+#echo "waiting for the keypress"
+#fi
+#done
 
 # procedure
 welcome

@@ -3,7 +3,7 @@
 
 This bash script aims to perform all necessary downloads, compilations, and installations to get [Geant4](https://geant4.web.cern.ch), [Root](https://root.cern.ch), ~~and [GATE](http://www.opengatecollaboration.org)~~ up and running on vanilla macOS with a single command (currently only Geant4 and Root implemented).
 
-Open a terminal, navigate to the cloned repo, and run `source macos_montecarlo.sh`. Geant4 will be installed to `/usr/local/share/Geant4-11.0.2/`, with executables into `/usr/local/bin`. Root will be installed by homebrew into the usual `/usr/local/Cellar` location (symlinked into `/usr/local/bin`).
+Open a terminal, navigate to the cloned repo, and run `source macos-montecarlo.sh`. Geant4 will be installed to `/usr/local/share/Geant4-11.0.2/`, with executables into `/usr/local/bin`. Root will be installed by homebrew into the usual `/usr/local/Cellar` location (symlinked into `/usr/local/bin`).
 
 To test successful installation, run:
 - version: `./geant4-config --version`

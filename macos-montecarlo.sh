@@ -169,6 +169,7 @@ function install_root(){
     echo "Root requires Xcode to be installed through the native Apple Appstore.";
     echo "The Appstore is opening now. Please make sure that xcode is installed,";
     echo "and only then press ENTER to continue."
+    open -a "App Store"
     press_key
     echo "Installing Root..."
     brew install root

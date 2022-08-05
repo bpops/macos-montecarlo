@@ -6,9 +6,9 @@ This bash script aims to perform all necessary downloads, compilations, and inst
 Open a terminal, navigate to the cloned repo, and run `source macos-montecarlo.sh`. Geant4 will be installed to `/usr/local/share/Geant4-11.0.2/`, with executables into `/usr/local/bin`. Root will be installed by homebrew into the usual `/usr/local/Cellar` location (symlinked into `/usr/local/bin`).
 
 To test successful installation, run:
-- version: `./geant4-config --version`
-- configuration: `./geant4-config --help`
-- datasets: `./geant4-config --check-datasets`
+- version: `geant4-config --version`
+- configuration: `geant4-config --help`
+- datasets: `geant4-config --check-datasets`
 
 ## Disclaimers
 

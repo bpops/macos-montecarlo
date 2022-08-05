@@ -32,7 +32,7 @@ function set_variables() {
     DOWN_DIR=downloads
 
     # number of processors to use for compile
-    N_PROC=$(nproc)
+    N_PROC=$(sysctl -n hw.logicalcpu)
 
     # Geant4 specific variables
     GEANT4_BUILD_MULTITHREADED=ON

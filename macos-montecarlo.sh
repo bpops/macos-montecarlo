@@ -86,6 +86,11 @@ function welcome(){
     press_key
 }
 
+# get macOS version
+function get_macos_version() {
+    MACOS_VERSION=$(sw_vers -productVersion)
+}
+
 # extract filenames, basenames
 function parse_variables(){
     GEANT4_FILENAME=$(basename $GEANT4_URL)
@@ -181,6 +186,7 @@ function install_gate(){
 }
 
 # procedure
+get_macos_version
 welcome
 set_variables
 parse_variables

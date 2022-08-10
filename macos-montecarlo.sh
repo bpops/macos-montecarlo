@@ -19,14 +19,14 @@
 function set_variables() {
 
     # which apps to install
-    INSTALL_GEANT4=true
-    INSTALL_ROOT=false
+    INSTALL_GEANT4=false
+    INSTALL_ROOT=true
     INSTALL_GATE=false
 
-    # application urls
+    # application urls; geant and root must be .tar.gz files
     GEANT4_URL=https://geant4-data.web.cern.ch/releases/geant4-v11.0.2.tar.gz
-    # note: that this must be a .tar.gz file for this script to work
     BREW_URL=https://raw.githubusercontent.com/Homebrew/install/master/install
+    XCODE_URL=https://apps.apple.com/us/app/xcode/id497799835?mt=12
 
     # download directory
     DOWN_DIR=downloads
@@ -44,7 +44,7 @@ function set_variables() {
 
 # press key to continue
 function press_key(){
-    echo "Press any key to continue..."
+    echo "Press any key to continue, CTRL+C to exit..."
     read -n 1
 }
 
@@ -80,8 +80,7 @@ function welcome(){
     echo "This script may take tens of minutes or even hours to complete. Premature";
     echo "termination of the script may result in a partially installed system.";
     echo "";
-    echo "If you understand and agree to all of the above, press ANY KEY to";
-    echo "continue. Otherwise, press CTRL+C to exit.";
+    echo "Only proceed if you understand and agree to all of the above.";
     echo ""
     press_key
 }
@@ -93,14 +92,29 @@ function get_macos_version() {
 
 # extract filenames, basenames
 function parse_variables(){
+
+    # geant4
     GEANT4_FILENAME=$(basename $GEANT4_URL)
     GEANT4_BASENAME=${GEANT4_FILENAME%.tar.gz}
     GEANT4_SRC_PTH=$PWD/$DOWN_DIR/$GEANT4_BASENAME
     GEANT4_BLD_PTH=$GEANT4_SRC_PTH/build
+
+    # root
+    ROOT_FILENAME=$(basename $ROOT_URL)
+    ROOT_BASENAME=${ROOT_FILENAME%.tar.gz}
+    ROOT_SRC_PTH=$PWD/$DOWN_DIR/$ROOT_BASENAME
+    ROOT_BLD_PTH=$ROOT_SRC_PTH/build
+}
+
+# make downloads directory
+function make_dl_dir(){
+    if [ ! -d $DOWN_DIR ]; then
+        mkdir $DOWN_DIR
+    fi
 }
 
 # install xcode tools
-function install_xcode(){
+function install_xcode_cltools(){
     if which gcc; then echo "Xcode tools already installed"; else
         echo "Installing Xcode tools..."
         xcode-select --install
@@ -113,39 +127,26 @@ function install_homebrew(){
         echo "Installing Homebrew..."
         /usr/bin/ruby -e "$(curl -fsSL $BREW_URL)"
     fi
-    brew install wget
-}
-
-# make downloads directory
-function make_dl_dir(){
-    if [ ! -d $DOWN_DIR ]; then
-        mkdir $DOWN_DIR
-    fi
-}
-
-# get geant4 files and extract
-function download_geant4(){
-    echo "Downloading Geant4..."
-    wget $GEANT4_URL -P $DOWN_DIR
-    tar -xvf $DOWN_DIR/$GEANT4_FILENAME -C $DOWN_DIR/
-}
-
-# install brew packages required by geant
-function install_geant4_reqs(){
-
-    # install packages
-    echo "Installing Geant4 requirements..."
-    brew install cmake qt@5 xerces-c
-
-    # add qt5 to path
-    echo 'export PATH="/usr/local/opt/qt@5/bin:$PATH"' >> ~/.zshrc
-
+    if ! which brew; then brew install wget; fi
 }
 
 # install geant4
 function install_geant4(){
 
-    #export qt5 flags
+    # download and extract geant
+    echo "Downloading Geant4..."
+    wget $GEANT4_URL -P $DOWN_DIR
+    tar -xvf $DOWN_DIR/$GEANT4_FILENAME -C $DOWN_DIR/
+
+    # install required packages
+    echo "Installing Geant4 requirements..."
+    brew install cmake qt@5 xerces-c
+
+    # add qt5 to path
+    export PATH="/usr/local/opt/qt@5/bin:$PATH"
+    echo 'export PATH="/usr/local/opt/qt@5/bin:$PATH"' >> ~/.zshrc
+
+    # export qt5 flags
     export LDFLAGS="-L/usr/local/opt/qt@5/lib"
     export CPPFLAGS="-I/usr/local/opt/qt@5/include"
 
@@ -164,20 +165,48 @@ function install_geant4(){
     make -j $N_PROC
     make install
 
-    # add geant4 scrip to path
-    echo 'source /usr/local/bin/geant4.sh' >> ~/.zshrc
+    # add geant4 script to path
+    PWD=$(pwd)
+    cd /usr/local/bin
+    source gean4.sh
+    cd $PWD
+    echo 'cd /usr/local/bin' >> ~/.zshrc
+    echo 'source geant4.sh' >> ~/.zshrc
+    echo 'cd ~' >> ~/.zshrc
 
 }
 
 # install root
 function install_root(){
-    echo "Root requires Xcode to be installed through the native Apple Appstore.";
-    echo "The Appstore is opening now. Please make sure that xcode is installed,";
-    echo "and only then press ENTER to continue."
-    open -a "App Store"
-    press_key
+
+    # install xcode
+    if [ -d "/Applications/Xcode.app" ]; then
+        echo "Xcode already installed."
+    else
+        echo "Root requires Xcode to be installed through the native Apple Appstore.";
+        echo "Xcode does not appear to be installed. The Appstore is opening now and";
+        echo "directing to the Xcode download page. Please download/install. Only";
+        echo "once this installation is complete, press enter.";
+        echo "";
+        open "$XCODE_URL"
+        press_key
+
+        # install xcode additions
+        echo "Xcode will require some additional items to be downloaded. Opening";
+        echo "Xcode now. Please download/install. Only once this installation is";
+        echo "completed, may you continue (it is okay to then close Xcode).";
+        echo "";
+        open -a Xcode
+        press_key
+    fi
+
+    # install root with homebrew
     echo "Installing Root..."
     brew install root
+
+    # add root to path
+    echo 'source /usr/local/bin/geant4.sh' >> ~/.zshrc
+
 }
 
 # install gate
@@ -190,17 +219,9 @@ get_macos_version
 welcome
 set_variables
 parse_variables
-install_xcode
+install_xcode_cltools
 install_homebrew
 make_dl_dir
-if $INSTALL_GEANT4; then
-    download_geant4
-    install_geant4_reqs
-    install_geant4
-fi
-if $INSTALL_ROOT; then
-    install_root
-fi
-if $INSTALL_GATE; then
-    install_gate
-fi
+if $INSTALL_GEANT4; then install_geant4; fi
+if $INSTALL_ROOT; then install_root; fi
+if $INSTALL_GATE; then install_gate; fi

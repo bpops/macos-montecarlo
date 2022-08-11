@@ -21,13 +21,14 @@ function set_variables() {
 
     # which apps to install
     INSTALL_GEANT4=false
-    INSTALL_ROOT=true
-    INSTALL_GATE=false
+    INSTALL_ROOT=false
+    INSTALL_GATE=true
 
     # application urls; geant and root must be .tar.gz files
     GEANT4_URL=https://geant4-data.web.cern.ch/releases/geant4-v11.0.2.tar.gz
     BREW_URL=https://raw.githubusercontent.com/Homebrew/install/master/install
     XCODE_URL=https://apps.apple.com/us/app/xcode/id497799835?mt=12
+    GATE_URL=https://drive.uca.fr/seafhttp/files/e6dffdcc-bf0b-4c86-934d-e9e7b7f10229/Gate-9.0.zip
 
     # download directory
     DOWN_DIR=downloads
@@ -72,11 +73,10 @@ function welcome(){
     echo "Geant4, ROOT, and GATE on macOS. It is designed to be used on a vanilla";
     echo "macOS installation. Please note that it will install Xcode tools, Homebrew,";
     echo "and required packages if they are not already installed. It will also modify";
-    echo "your .zshrc file to include the GATE and Geant4 paths. Please read the";
+    echo "your .zshrc file to include the Geant4 and Root paths. Please read the";
     echo "script and understand what the script is doing before execution.";
     echo ""
-    echo "You may be asked for your password multiple times, primariliy in order to";
-    echo "install Homebrew and required packages.";
+    echo "You may be asked for your password multiple times.";
     echo "";
     echo "This script may take tens of minutes or even hours to complete. Premature";
     echo "termination of the script may result in a partially installed system.";
@@ -105,6 +105,10 @@ function parse_variables(){
     ROOT_BASENAME=${ROOT_FILENAME%.tar.gz}
     ROOT_SRC_PTH=$PWD/$DOWN_DIR/$ROOT_BASENAME
     ROOT_BLD_PTH=$ROOT_SRC_PTH/build
+
+    # gate
+    GATE_FILENAME=$(basename $GATE_URL)
+    GATE_BASE_NAME=${GATE_FILENAME%.zip}
 }
 
 # make downloads directory
@@ -228,9 +232,17 @@ function install_root(){
 
 # install gate
 function install_gate(){
+
+    # download Gate
     echo "";
-    echo "Installing GATE..."
+    echo "Downloading Gate..."
     echo "";
+    wget $GATE_URL -P $DOWN_DIR
+    unzip $DOWN_DIR/$GATE_FILENAME -d $DOWN_DIR/
+
+    #echo "";
+    #echo "Installing GATE..."
+    #echo "";
 }
 
 # procedure
